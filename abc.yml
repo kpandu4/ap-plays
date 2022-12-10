@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  tasks:
+  - name: Want to test return code, rc 
+    command: /usr/sbin/httpd -v
+    register: version
+    ignore_errors: True
+
+  - name: print httpd version
+    debug:
+      msg: "{{ version }}"
+    when: "version.rc == 0"
+
+  - name: install httpd 
+    yum: name=httpd state=present
+    when: "version.rc != 0 "
+
+  - name: command 
+    shell: "ls -ls"
+    register: op 
+
+  - debug:
+      msg: "{{ op }}"
+

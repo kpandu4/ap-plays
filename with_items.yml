@@ -1,0 +1,38 @@
+---
+- hosts: lc
+  name: with items syntax
+  tasks:
+    - name: simple use case 
+      debug:
+        msg: "This is item {{item}}"
+      with_items:
+      - "a"
+      - "b"
+      - "c"
+    - name: Nested list example 
+      debug:
+        msg: "database name {{item}}"
+      with_items:
+      - ["MySQL", "PostgreSQL"]
+      - ["MongoDB", "DocumentDB", "Firestore"]
+    - name: creating some users, same 
+      user:
+        name: "{{ item }}"
+        state: present
+      with_items:
+      - jaki
+      - jackey
+    - name: looping with list, comparing with loop
+      debug:
+        msg: "looping stuff  {{item}}"
+      loop:
+      - ['ibm', "sp"]
+
+    - name: creating some files using item + with_items 
+      file:
+        name:  "~/haj/{{ item.naam }}" ## naam is your wish ##
+        state: touch
+        mode: "{{ item.power }}"   ## power string users choice ##
+      with_items:
+      - {naam: naam1, power: "777"}
+      - {naam: naam2, power: "704"}

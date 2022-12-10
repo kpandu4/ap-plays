@@ -1,0 +1,46 @@
+---
+- hosts: lc
+  tasks:
+  -  name: checking lineinfile
+     lineinfile:
+       dest: tfile
+       regex: "ipv5"
+       state: absent
+#  -  name: Replace a localhost entry with our own
+#     ansible.builtin.lineinfile:
+#       path: tfile
+#       regexp: '^127\.0\.0\.1'
+#       line: 127.0.0.1 localhost
+#       owner: root
+#       group: root
+#       mode: '0644'
+
+  - name: Ensure the default Apache port is 8080
+    ansible.builtin.lineinfile:
+      path: tfile
+      regexp: '^Listen '
+      insertafter: '^jaki '
+      line: Listen 8081
+
+  - name: Insert before 0
+    ansible.builtin.lineinfile:
+      path: tfile
+      regexp: '^ipv4'
+      insertbefore: ^ipv4'
+      line: Listen 0001
+
+  - name: Do not count this as a failure
+    ansible.builtin.command: /bin/false
+    ignore_errors: true
+
+  - name: using search string
+    ansible.builtin.lineinfile:
+      dest: tfile
+      search_string: '127.0.0.1'
+      line: 127.0.0.1 localhost 
+    ignore_errors: true   
+
+  - name: will print 
+    debug:
+      msg: "hello previous one failed"
+

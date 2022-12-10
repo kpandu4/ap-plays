@@ -1,0 +1,31 @@
+---
+- hosts: lc
+  name: with items syntax
+  tasks:
+  - name: Handle the error
+    block:
+      - name: Force a failure  ## Since this fails, the next step task is rescue  
+        ansible.builtin.command: /bin/false
+
+      - name: Print a message
+        ansible.builtin.debug:
+          msg: 'I execute normally'
+
+      - name: Force a failure
+        stat:
+          path: /etc/fstab
+        register: fstap
+
+      - name: check fstap's permission
+        fail:
+          msg: file not owned by joshua
+        when: fstap.stat.pw_name != 'joshua'
+
+      - name: Never print this
+        ansible.builtin.debug:
+          msg: 'I never execute, due to the above task failing, '
+          
+    rescue:
+      - name: This is rescue model  ##Ansible only runs rescue blocks after a task returns a ‘failed’ state ##
+        ansible.builtin.debug:
+          msg: 'I caught an error, can do stuff here to fix it'
